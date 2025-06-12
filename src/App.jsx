@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Loader2, CheckCircle } from "lucide-react";
+import { Menu, CheckCircle } from "lucide-react";
 
-// --- KOMPONEN UNTUK TRIK PSIKOLOGIS ---
+// --- KOMPONEN BANTUAN ---
 
-const RobuxIcon = () => (
+// Ikon Robux yang bisa diberi className untuk animasi dan ukuran
+const RobuxIcon = ({ className }) => (
   <svg
-    width="22"
-    height="22"
+    className={className}
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -16,13 +18,11 @@ const RobuxIcon = () => (
       fill="currentColor"
       stroke="currentColor"
       strokeWidth="1"
-      strokeLinecap="round"
-      strokeLinejoin="round"
     />
   </svg>
 );
 
-// 1. Komponen Notifikasi Social Proof
+// Notifikasi Social Proof
 const SocialProofNotification = ({ user, amount }) => (
   <div className="fixed bottom-4 left-4 bg-gray-800 border border-green-500 text-white text-sm py-2 px-4 rounded-lg shadow-lg z-50 animate-fade-in-out">
     <strong>{user}</strong> baru saja berhasil mendapatkan{" "}
@@ -32,15 +32,15 @@ const SocialProofNotification = ({ user, amount }) => (
   </div>
 );
 
-// 2. Komponen Loading Spinner
+// Loading Spinner TEMATIK dengan Ikon Robux
 const LoadingSpinner = ({ message }) => (
   <div className="flex flex-col items-center justify-center gap-4 text-white p-8">
-    <Loader2 className="w-12 h-12 animate-spin text-primary" />
-    <p className="text-lg font-semibold animate-pulse">{message}</p>
+    <RobuxIcon className="w-16 h-16 animate-spin text-primary" />
+    <p className="text-lg font-semibold animate-pulse mt-2">{message}</p>
   </div>
 );
 
-// 3. Komponen Countdown Timer
+// Countdown Timer
 const CountdownTimer = ({ initialMinutes = 10 }) => {
   const [seconds, setSeconds] = useState(initialMinutes * 60);
 
@@ -70,6 +70,8 @@ const CountdownTimer = ({ initialMinutes = 10 }) => {
   );
 };
 
+// --- KOMPONEN UTAMA APLIKASI ---
+
 function App() {
   const [step, setStep] = useState(1);
   const [username, setUsername] = useState("");
@@ -87,7 +89,7 @@ function App() {
     },
     {
       name: "Tugas 2: Subscribe YouTube",
-      url: "https://www.youtube.com/@roblox?sub_confirmation=1",
+      url: "https://www.youtube.com/@GoogleDevelopers",
       completed: false,
     },
   ];
@@ -95,10 +97,10 @@ function App() {
   const [verifyingTaskIndex, setVerifyingTaskIndex] = useState(null);
 
   const robuxOptions = [
-    { amount: 500, price: "$ 0,00" },
-    { amount: 10000, price: "$ 0,00" },
-    { amount: 50000, price: "$ 0,00" },
-    { amount: 100000, price: "$ 0,00" },
+    { price: "$0.00", amount: 500 },
+    { price: "$0.00", amount: 10000 },
+    { price: "$0.00", amount: 50000 },
+    { price: "$0.00", amount: 100000 },
   ];
 
   useEffect(() => {
@@ -186,7 +188,7 @@ function App() {
             >
               <Menu size={24} />
             </button>
-            <div className="text-xl font-bold">MySite</div>
+            <RobuxIcon className="w-8 h-8 text-white" />
           </div>
           <nav className="hidden md:flex gap-8 font-semibold">
             <a
@@ -208,9 +210,7 @@ function App() {
               Robux
             </a>
           </nav>
-          <div className="w-10 h-10 bg-gray-600 rounded-full font-bold flex items-center justify-center select-none">
-            {username ? username.charAt(0).toUpperCase() : "U"}
-          </div>
+          {/* Logo User sudah dihapus dari sini */}
         </div>
         {isMobileMenuOpen && (
           <div className="md:hidden bg-dark-lighter border-t border-gray-700">
@@ -249,14 +249,13 @@ function App() {
             {step === 1 && (
               <div className="w-full max-w-4xl animate-fade-in">
                 <section
-                  className="bg-cover bg-center rounded-xl shadow-lg"
+                  className="bg-cover bg-center rounded-xl p-8 md:p-12 mb-6 text-center shadow-lg"
                   style={{
-                    backgroundImage: `url('https://rare-gallery.com/thumbnail/1341905-Roblox-Video-Game-Wallpaper-Background-Image.jpg')`,
+                    backgroundImage: `url('https://images.alphacoders.com/133/1330923.jpeg')`,
                   }}
                 >
-                  {/* Konten ini yang akan memberikan tinggi pada section */}
-                  <div className="bg-black/60 p-12 md:p-20 rounded-lg">
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-white">
+                  <div className="bg-black/60 p-6 rounded-lg">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">
                       Pusat Hadiah Resmi
                     </h1>
                     <p className="text-lg text-gray-200 mt-2">
@@ -264,7 +263,6 @@ function App() {
                     </p>
                   </div>
                 </section>
-
                 <section className="bg-dark-lighter p-8 rounded-xl w-full">
                   <form
                     onSubmit={handleUsernameSubmit}
@@ -284,7 +282,7 @@ function App() {
                     />
                     <button
                       type="submit"
-                      className="w-fit bg-green-500 text-white py-3 px-7 font-bold rounded-lg hover:bg-primary-hover"
+                      className="w-fit bg-primary text-white py-3 px-7 font-bold rounded-lg hover:bg-primary-hover"
                     >
                       Periksa Akun
                     </button>
@@ -293,7 +291,6 @@ function App() {
               </div>
             )}
 
-            {/* --- LANGKAH 2: Diubah total menyerupai gambar --- */}
             {step === 2 && (
               <section className="bg-dark-lighter p-6 md:p-8 rounded-xl w-full max-w-4xl animate-fade-in">
                 <div className="text-center mb-8">
@@ -305,22 +302,20 @@ function App() {
                     special abilities in experiences.
                   </p>
                 </div>
-
-                {/* Daftar Pilihan Robux dengan Layout Baru */}
                 <div className="flex flex-col">
                   {robuxOptions.map((option, index) => (
                     <div
                       key={index}
                       className="flex justify-between items-center py-4 border-b border-gray-700 last:border-b-0"
                     >
-                      <span className="text-lg font-semibold text-white">
+                      <span className="text-lg font-semibold text-gray-300">
                         {option.price}
                       </span>
                       <button
                         onClick={() => handleRobuxSelect(option.amount)}
                         className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-md flex items-center gap-2 transition-colors"
                       >
-                        <RobuxIcon />
+                        <RobuxIcon className="w-5 h-5" />
                         {option.amount.toLocaleString("en-US")}
                       </button>
                     </div>
@@ -369,7 +364,6 @@ function App() {
                 <p className="text-center text-sm text-gray-400 mb-6">
                   {completedTasksCount} dari {tasks.length} tugas selesai
                 </p>
-
                 <div className="flex flex-col gap-4 mb-8">
                   {tasks.map((task, index) => (
                     <button
@@ -388,7 +382,7 @@ function App() {
                       {verifyingTaskIndex === index ? (
                         <>
                           {" "}
-                          <Loader2 className="animate-spin mr-2" />{" "}
+                          <RobuxIcon className="animate-spin mr-2" />{" "}
                           Memverifikasi...{" "}
                         </>
                       ) : task.completed ? (
@@ -402,7 +396,6 @@ function App() {
                     </button>
                   ))}
                 </div>
-
                 {allTasksCompleted ? (
                   <a
                     href={whatsappUrl}
