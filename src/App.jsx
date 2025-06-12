@@ -3,6 +3,25 @@ import { Menu, Loader2, CheckCircle } from "lucide-react";
 
 // --- KOMPONEN UNTUK TRIK PSIKOLOGIS ---
 
+const RobuxIcon = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 2.5L4.5 6.25V13.75L12 17.5L19.5 13.75V6.25L12 2.5Z"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 // 1. Komponen Notifikasi Social Proof
 const SocialProofNotification = ({ user, amount }) => (
   <div className="fixed bottom-4 left-4 bg-gray-800 border border-green-500 text-white text-sm py-2 px-4 rounded-lg shadow-lg z-50 animate-fade-in-out">
@@ -76,10 +95,10 @@ function App() {
   const [verifyingTaskIndex, setVerifyingTaskIndex] = useState(null);
 
   const robuxOptions = [
-    { amount: 500 },
-    { amount: 10000 },
-    { amount: 50000 },
-    { amount: 100000 },
+    { amount: 500, price: "$ 0,00" },
+    { amount: 10000, price: "$ 0,00" },
+    { amount: 50000, price: "$ 0,00" },
+    { amount: 100000, price: "$ 0,00" },
   ];
 
   useEffect(() => {
@@ -230,15 +249,14 @@ function App() {
             {step === 1 && (
               <div className="w-full max-w-4xl animate-fade-in">
                 <section
-                  className="bg-cover bg-center rounded-xl p-8 md:p-12 mb-6 text-center shadow-lg"
+                  className="bg-cover bg-center rounded-xl shadow-lg"
                   style={{
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                    backgroundImage: `url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUMRByandbXnTUTzM_H0eE-qUpBQANYsaLHdV5auOXm7GxwVq4dCWsJjIfGe679oz8bys&usqp=CAU')`,
+                    backgroundImage: `url('https://rare-gallery.com/thumbnail/1341905-Roblox-Video-Game-Wallpaper-Background-Image.jpg')`,
                   }}
                 >
-                  <div className="bg-black/60 p-6 rounded-lg">
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">
+                  {/* Konten ini yang akan memberikan tinggi pada section */}
+                  <div className="bg-black/60 p-12 md:p-20 rounded-lg">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-white">
                       Pusat Hadiah Resmi
                     </h1>
                     <p className="text-lg text-gray-200 mt-2">
@@ -275,32 +293,39 @@ function App() {
               </div>
             )}
 
+            {/* --- LANGKAH 2: Diubah total menyerupai gambar --- */}
             {step === 2 && (
               <section className="bg-dark-lighter p-6 md:p-8 rounded-xl w-full max-w-4xl animate-fade-in">
-                <div className="text-center mb-6">
+                <div className="text-center mb-8">
                   <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                    Pilih Jumlah Robux
+                    Get Robux
                   </h1>
-                  <p className="text-gray-300">
-                    Selamat,{" "}
-                    <span className="font-bold text-primary">{username}</span>!
-                    Akun Anda memenuhi syarat.
+                  <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    Robux allows you to purchase upgrades for your avatar or buy
+                    special abilities in experiences.
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {robuxOptions.map((option) => (
-                    <button
-                      key={option.amount}
-                      onClick={() => handleRobuxSelect(option.amount)}
-                      className="bg-dark hover:bg-gray-800 p-4 rounded-lg flex items-center justify-center gap-3 transition-colors"
+
+                {/* Daftar Pilihan Robux dengan Layout Baru */}
+                <div className="flex flex-col">
+                  {robuxOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center py-4 border-b border-gray-700 last:border-b-0"
                     >
-                      <span className="font-bold text-xl text-green-400">
-                        {option.amount.toLocaleString("en-US")} Robux
+                      <span className="text-lg font-semibold text-white">
+                        {option.price}
                       </span>
-                    </button>
+                      <button
+                        onClick={() => handleRobuxSelect(option.amount)}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-md flex items-center gap-2 transition-colors"
+                      >
+                        <RobuxIcon />
+                        {option.amount.toLocaleString("en-US")}
+                      </button>
+                    </div>
                   ))}
                 </div>
-                <CountdownTimer initialMinutes={10} />
               </section>
             )}
 
