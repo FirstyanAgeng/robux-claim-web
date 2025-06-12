@@ -1,436 +1,181 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Menu, CheckCircle } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import styles from "./App.module.css";
+import FoldingCubeLoader from "./components/foldingCubeLoader";
+// --- DATA & KONSTANTA ---
+const NOTIFICATION_MESSAGES = [
+  "xfasom claimed 50k Robux!",
+  "chaloka claimed 1M Robux!",
+  "guest123 just received 100k Robux!",
+  "user999 unlocked 500k Robux!",
+  "winbot claimed 250k Robux!",
+  "zoro212 just earned 1.2M Robux!",
+  "yara2000 claimed 750k Robux!",
+];
+const ROBUX_OPTIONS = [500, 10000, 50000, 100000];
 
-// --- KOMPONEN BANTUAN ---
-
-// [FINAL & ACCURATE] Ikon yang dibangun dari 4 bagian untuk bentuk yang presisi
-const AccurateTransformingIcon = ({ className }) => {
-  const transition = { duration: 1.2, ease: [0.4, 0, 0.2, 1] };
-
-  // Varian untuk setiap bagian (piece) dari wajik
-  const topPieceVariants = {
-    initial: { x: 0, y: 0, rotate: 0 },
-    final: { x: -4, y: -8, rotate: -45, scale: 0.9 },
-  };
-  const rightPieceVariants = {
-    initial: { x: 0, y: 0, rotate: 0 },
-    final: { x: 4, y: -8, rotate: 45, scale: 0.9 },
-  };
-  const bottomPieceVariants = {
-    initial: { x: 0, y: 0, rotate: 0 },
-    final: { y: 8, scale: 1.1 },
-  };
-  const leftPieceVariants = {
-    initial: { x: 0, y: 0, rotate: 0 },
-    final: { x: -8, y: 2, rotate: 45, scale: 0.9 },
-  };
-
-  return (
-    <motion.svg
-      className={className}
-      width="100"
-      height="100"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      initial="initial"
-      animate="final"
-      // Konfigurasi transisi untuk seluruh grup
-      transition={{ staggerChildren: 0.1 }}
-    >
-      {/* Setiap path adalah sebuah trapesium. Saat digabungkan, 
-        mereka membentuk wajik tebal dengan lubang di tengah.
-      */}
-      <motion.path
-        d="M12 2 L22 12 L17 12 L12 7 Z" // Top piece
-        variants={topPieceVariants}
-        transition={transition}
-      />
-      <motion.path
-        d="M22 12 L12 22 L12 17 L17 12 Z" // Right piece
-        variants={rightPieceVariants}
-        transition={transition}
-      />
-      <motion.path
-        d="M12 22 L2 12 L7 12 L12 17 Z" // Bottom piece
-        variants={bottomPieceVariants}
-        transition={transition}
-      />
-      <motion.path
-        d="M2 12 L12 2 L12 7 L7 12 Z" // Left piece
-        variants={leftPieceVariants}
-        transition={transition}
-      />
-    </motion.svg>
-  );
-};
-
-
-// [UPDATED] Komponen Overlay Loading yang menggunakan ikon AKURAT yang baru
-const LoadingOverlay = ({ message }) => (
-  <AnimatePresence>
-    <motion.div
-      className="fixed inset-0 bg-dark bg-opacity-80 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* --- Menggunakan Ikon Final --- */}
-      <AccurateTransformingIcon className="text-primary" />
-      <p className="text-lg font-semibold mt-4 text-white">{message}</p>
-    </motion.div>
-  </AnimatePresence>
-);
-
-
-// Notifikasi Social Proof (Tetap Sama)
-const SocialProofNotification = ({ user, amount }) => (
-  <div className="fixed bottom-4 left-4 bg-gray-800 border border-green-500 text-white text-sm py-2 px-4 rounded-lg shadow-lg z-50 animate-fade-in-out">
-    <strong>{user}</strong> baru saja berhasil mendapatkan{" "}
-    <span className="font-bold text-green-400">
-      {amount.toLocaleString("en-US")} Robux!
-    </span>
-  </div>
-);
-
-// Countdown Timer (Tetap Sama)
-const CountdownTimer = ({ initialMinutes = 10 }) => {
-  const [seconds, setSeconds] = useState(initialMinutes * 60);
-
-  useEffect(() => {
-    if (seconds <= 0) return;
-    const timer = setInterval(() => {
-      setSeconds((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [seconds]);
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const secs = time % 60;
-    return `${minutes.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  return (
-    <div className="bg-red-500/20 border border-red-500 text-white text-center py-2 px-4 rounded-lg mt-6">
-      <p className="font-bold">
-        Penawaran ini berakhir dalam:{" "}
-        <span className="text-xl tracking-wider">{formatTime(seconds)}</span>
-      </p>
-    </div>
-  );
-};
-
-// Ikon Robux reguler (Tetap Sama)
+// --- KOMPONEN BANTUAN (dari contoh React kedua) ---
 const RobuxIcon = ({ className }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M12 2.5L4.5 6.25V13.75L12 17.5L19.5 13.75V6.25L12 2.5Z"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="1"
-    />
-  </svg>
+  <img src="https://i.postimg.cc/wjR3BTJp/w-robux.png" alt="Robux" className={className} />
 );
 
+const PopupNotification = ({ message }) => {
+  if (!message) return null;
 
-// --- KOMPONEN UTAMA APLIKASI ---
+  return (
+    <motion.div
+      className={styles.popupNotification}
+      initial={{ x: "100%", opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ opacity: 0, x: "100%" }}
+      transition={{ ease: "easeOut", duration: 0.5 }}
+    >
+      {message}
+    </motion.div>
+  );
+};
 
+
+// --- KOMPONEN UTAMA ---
 function App() {
   const [step, setStep] = useState(1);
   const [username, setUsername] = useState("");
-  const [selectedAmount, setSelectedAmount] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [notification, setNotification] = useState(null);
+  const audioRef = useRef(null);
 
-  const initialTasks = [
-    { name: "Tugas 1: Follow Instagram", url: "https://www.instagram.com/acen.ggaul?igsh=anlleTR1Y2o0anR6", completed: false },
-    { name: "Tugas 2: Subscribe YouTube", url: "https://www.youtube.com/@FreeFireID", completed: false },
-  ];
-  const [tasks, setTasks] = useState(initialTasks);
-  const [verifyingTaskIndex, setVerifyingTaskIndex] = useState(null);
-
-  const robuxOptions = [
-    { price: "Gratis", amount: 500 },
-    { price: "Gratis", amount: 10000 },
-    { price: "Gratis", amount: 50000 },
-    { price: "Gratis", amount: 100000 },
-  ];
-
-  const simulateLoadingSequence = useCallback((messages, onFinished) => {
-    setIsLoading(true);
-    let currentIndex = 0;
-    const showNextMessage = () => {
-      if (currentIndex < messages.length) {
-        setLoadingMessage(messages[currentIndex]);
-        currentIndex++;
-        setTimeout(showNextMessage, 1800);
-      } else {
-        setIsLoading(false);
-        onFinished();
-      }
-    };
-    showNextMessage();
-  }, []);
-
+  // Efek untuk notifikasi
   useEffect(() => {
-    const fakeUsers = ["User991", "xXSlayerXx", "RobloxPro22", "Jenny_12", "GamerZ"];
-    const fakeAmounts = [500, 10000, 50000, 100000];
     const showRandomNotification = () => {
-      const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-      const amount = fakeAmounts[Math.floor(Math.random() * fakeAmounts.length)];
-      setNotification({ user, amount });
-      setTimeout(() => setNotification(null), 4000);
+      const randomMessage = NOTIFICATION_MESSAGES[Math.floor(Math.random() * NOTIFICATION_MESSAGES.length)];
+      setNotification({ message: randomMessage, key: Date.now() }); // Kunci unik untuk re-animasi
+      audioRef.current?.play().catch(() => {});
+      setTimeout(() => setNotification(null), 3500); // Sembunyikan setelah 3.5 detik
     };
-    const interval = setInterval(showRandomNotification, Math.random() * 7000 + 8000);
-    return () => clearInterval(interval);
+    const initialTimeout = setTimeout(showRandomNotification, 2000);
+    const interval = setInterval(showRandomNotification, 5000);
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
   }, []);
 
+  // Handler untuk submit username
   const handleUsernameSubmit = (e) => {
     e.preventDefault();
-    if (username.trim()) {
-      const messages = [`Mencari Akun ${username}...`, "Akun Ditemukan!", "Menghubungkan ke server..."];
-      simulateLoadingSequence(messages, () => setStep(2));
+    if (username.trim().length <= 2) {
+      alert("Please enter a valid username.");
+      return;
+    }
+    setLoadingMessage(`Searching for <b>${username}</b> ...`);
+    setStep(2);
+    setTimeout(() => {
+      setStep(3);
+    }, 4500); // Durasi loading sesuai HTML asli
+  };
+  
+  // Handler untuk memilih Robux
+  const handleRobuxSelect = (amount) => {
+    console.log(`User selected ${amount} Robux.`);
+    setStep(4); // Lanjut ke langkah verifikasi final
+  };
+  
+  // Handler untuk tombol verifikasi
+  const handleVerify = () => {
+    alert("Verification task would start now.");
+  };
+
+  const renderStepContent = () => {
+    switch (step) {
+      case 1:
+        return (
+          <motion.div key="step1" className={styles.boxContent} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <h3>• Roblox username</h3>
+            <form onSubmit={handleUsernameSubmit} className={styles.form}>
+              <input
+                className={styles.input}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username..."
+              />
+              <button type="submit" className={styles.button}>Next</button>
+            </form>
+          </motion.div>
+        );
+      case 2:
+        return (
+          <motion.div key="step2" className={styles.boxContent} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <FoldingCubeLoader />
+            <p className={styles.loadingText} dangerouslySetInnerHTML={{ __html: loadingMessage }}/>
+          </motion.div>
+        );
+      case 3:
+        return (
+          <motion.div key="step3" className={styles.container} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {ROBUX_OPTIONS.map((amount) => (
+              <div key={amount} className={styles.row} onClick={() => handleRobuxSelect(amount)}>
+                <span className={styles.price}>$0.00</span>
+                <div className={styles.details}>
+                  <div className={styles.robuxTotal}>
+                    <RobuxIcon className={styles.pic} />
+                    <span>{amount.toLocaleString('en-US')}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        );
+      case 4:
+        return (
+          <motion.div key="step4" className={styles.boxContent} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <h3>• Final Step</h3>
+            <p>Please click on the button below and complete 1 task to verify that you're not a robot!</p>
+            <button className={styles.button} onClick={handleVerify}>Verify now</button>
+          </motion.div>
+        );
+      default:
+        return null;
     }
   };
 
-  const handleRobuxSelect = (amount) => {
-    setSelectedAmount(amount);
-    const messages = ["Memproses Permintaan...", `Menyiapkan ${amount.toLocaleString("en-US")} Robux...`, "Berhasil!"];
-    simulateLoadingSequence(messages, () => setStep(3));
-  };
-
-  const handleVerify = () => {
-    const messages = ["Mempersiapkan verifikasi..."];
-    simulateLoadingSequence(messages, () => setStep(4));
-  };
-
-  const handleTaskClick = (taskIndex) => {
-    if (verifyingTaskIndex !== null || tasks[taskIndex].completed) return;
-    window.open(tasks[taskIndex].url, "_blank", "noopener,noreferrer");
-    setVerifyingTaskIndex(taskIndex);
-    setTimeout(() => {
-      setTasks((currentTasks) =>
-        currentTasks.map((task, index) =>
-          index === taskIndex ? { ...task, completed: true } : task
-        )
-      );
-      setVerifyingTaskIndex(null);
-    }, 3500);
-  };
-
-  const completedTasksCount = tasks.filter((task) => task.completed).length;
-  const allTasksCompleted = completedTasksCount === tasks.length;
-  const whatsappMessage = encodeURIComponent(`Klaim Robux: ${username} - ${selectedAmount.toLocaleString("en-US")}`);
-  const whatsappUrl = `https://wa.me/6282185780582?text=${whatsappMessage}`;
-
   return (
-    <div className="min-h-screen bg-dark flex flex-col text-white font-sans">
-      {notification && <SocialProofNotification user={notification.user} amount={notification.amount} />}
-      {isLoading && <LoadingOverlay message={loadingMessage} />}
-
-      <header className="bg-dark-lighter sticky top-0 z-40 border-b border-gray-700">
-        <div className="flex justify-between items-center px-4 h-14 max-w-7xl mx-auto">
-          <div className="flex items-center gap-2">
-            <RobuxIcon className="w-8 h-8 text-white" />
-            <span className="text-xl font-bold tracking-wider">ROBLOX</span>
-          </div>
-          <nav className="hidden md:flex gap-8 font-semibold">
-            <a href="#" className="px-2 h-14 flex items-center text-primary font-bold">
-              Robux
-            </a>
-          </nav>
-          <div className="md:hidden">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              <Menu size={24} />
-            </button>
-          </div>
+    <>
+      <header className={styles.nav}>
+        <div className={styles.logo}>
+          <RobuxIcon className={styles.logoIcon} />
+          <span className={styles.logoText}>ROBLOX</span>
         </div>
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-dark-lighter border-t border-gray-700">
-            <nav className="flex flex-col py-2">
-              <a href="#" className="px-4 py-3 hover:bg-gray-700 font-bold text-primary" onClick={() => setIsMobileMenuOpen(false)}>
-                Robux
-              </a>
-            </nav>
-          </div>
-        )}
+        <nav className={styles.navLinks}>
+          <a href="#">Discover</a>
+          <a href="#">Marketplace</a>
+          <a href="#" className={styles.activeLink}>Robux</a>
+        </nav>
       </header>
 
-      <main className="flex-1 w-full py-6 flex flex-col items-center justify-center gap-6 px-4">
-        {step === 1 && (
-          <div className="w-full max-w-4xl animate-fade-in">
-            <section
-              className="bg-cover bg-center rounded-xl p-8 md:p-12 mb-6 text-center shadow-lg"
-              style={{ backgroundImage: `url('/images/bp.png')` }}
-            >
-              <div className="bg-black/60 p-6 rounded-lg">
-                <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">
-                  Get Robux
-                </h1>
-                <p className="text-lg text-gray-200 mt-2">
-                  Robux allows you to purchase upgrades for your avatar or
-                  buy special abilities in experiences.
-                </p>
-              </div>
-            </section>
-            <section className="bg-dark-lighter p-8 rounded-xl w-full">
-              <form onSubmit={handleUsernameSubmit} className="flex flex-col gap-4">
-                <label htmlFor="username" className="text-lg font-bold">
-                  Roblox Username
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Masukkan username Anda..."
-                  className="w-full p-3 text-base rounded-lg border-none outline-none text-black bg-gray-200 focus:ring-4 focus:ring-primary/50"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-fit bg-green-500 hover:bg-green-600 cursor-pointer text-white py-3 px-7 font-bold rounded-lg hover:bg-primary-hover transition-colors"
-                >
-                  Periksa Akun
-                </button>
-              </form>
-            </section>
+      <main>
+        <section className={styles.middle}>
+          <div className={styles.middleOverlay}>
+            <h2 className={styles.middleTitle}>Get Robux</h2>
+            <p className={styles.middleSubtitle}>
+              Robux allows you to purchase upgrades for your avatar or buy special abilities in experiences.
+            </p>
           </div>
-        )}
+        </section>
 
-        {step === 2 && (
-          <section className="bg-dark-lighter p-6 md:p-8 rounded-xl w-full max-w-4xl animate-fade-in">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                Pilih Jumlah Robux
-              </h1>
-              <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Akun <strong className="text-primary">{username}</strong>{" "}
-                berhasil ditemukan. Silakan pilih jumlah Robux.
-              </p>
-            </div>
-            <div className="flex flex-col">
-              {robuxOptions.map((option, index) => (
-                <div key={index} className="flex justify-between items-center py-4 border-b border-gray-700 last:border-b-0">
-                  <span className="text-lg font-semibold text-green-400">
-                    {option.price}
-                  </span>
-                  <button
-                    onClick={() => handleRobuxSelect(option.amount)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-md flex items-center gap-2 transition-colors"
-                  >
-                    <RobuxIcon className="w-5 h-5" />
-                    GET {option.amount.toLocaleString("en-US")}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {step === 3 && (
-          <section className="bg-dark-lighter p-8 rounded-xl w-full max-w-2xl text-center animate-fade-in">
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Langkah Terakhir, {username}
-            </h2>
-            <p className="text-gray-300 mb-6">
-              Sistem kami mendeteksi aktivitas yang tidak biasa. Untuk
-              keamanan, selesaikan verifikasi singkat untuk membuktikan Anda
-              bukan robot.
-            </p>
-            <button
-              onClick={handleVerify}
-              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors"
-            >
-              Verifikasi Sekarang
-            </button>
-            <CountdownTimer initialMinutes={5} />
-          </section>
-        )}
-
-        {step === 4 && (
-          <section className="bg-dark-lighter p-8 rounded-xl w-full max-w-2xl animate-fade-in">
-            <h2 className="text-2xl font-bold text-white mb-2">
-              Verifikasi Manusia
-            </h2>
-            <p className="text-gray-300 mb-6">
-              Selesaikan semua tugas untuk membuka{" "}
-              <strong className="text-primary">
-                {selectedAmount.toLocaleString("en-US")} Robux
-              </strong>.
-            </p>
-            <div className="w-full bg-gray-700 rounded-full h-4 mb-2">
-              <div
-                className="bg-green-500 h-4 rounded-full transition-all duration-500"
-                style={{ width: `${(completedTasksCount / tasks.length) * 100}%` }}
-              ></div>
-            </div>
-            <p className="text-center text-sm text-gray-400 mb-6">
-              {completedTasksCount} dari {tasks.length} tugas selesai
-            </p>
-            <div className="flex flex-col gap-4 mb-8">
-              {tasks.map((task, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleTaskClick(index)}
-                  disabled={verifyingTaskIndex !== null || task.completed}
-                  className={`w-full text-center font-semibold py-3 px-5 rounded-md transition-all duration-300 flex items-center justify-center
-                    ${task.completed ? "bg-green-600 text-white cursor-default" : verifyingTaskIndex === index ? "bg-yellow-500/50 text-white cursor-wait" : "bg-gray-700 hover:bg-gray-600 text-white"}`}
-                >
-                  {verifyingTaskIndex === index ? (
-                    <>
-                      <RobuxIcon className="animate-spin mr-2" />
-                      Memverifikasi...
-                    </>
-                  ) : task.completed ? (
-                    <>
-                      <CheckCircle className="mr-2" />
-                      {task.name} Selesai
-                    </>
-                  ) : (
-                    task.name
-                  )}
-                </button>
-              ))}
-            </div>
-            {allTasksCompleted ? (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md animate-bounce"
-              >
-                KLAIM SEKARANG!
-              </a>
-            ) : (
-              <button
-                disabled
-                className="w-full block text-center bg-gray-600 text-gray-400 font-bold py-3 px-8 rounded-md cursor-not-allowed"
-              >
-                Selesaikan semua tugas untuk klaim
-              </button>
-            )}
-          </section>
-        )}
+        <section className={styles.boxCon}>
+          <AnimatePresence mode="wait">
+            {renderStepContent()}
+          </AnimatePresence>
+        </section>
       </main>
 
-      <footer className="bg-dark text-gray-500 text-sm text-center py-6 select-none">
-        <p>Copyright © 2025. All rights reserved.</p>
-      </footer>
-    </div>
+      <AnimatePresence>
+        {notification && <PopupNotification message={notification.message} key={notification.key} />}
+      </AnimatePresence>
+
+      <audio ref={audioRef} preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c11d9e249.mp3"/>
+    </>
   );
 }
 

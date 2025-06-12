@@ -1,0 +1,303 @@
+/* Letakkan ini di file CSS utama Anda, misal: src/index.css */
+
+@import "tailwindcss";
+/* -- CSS UNTUK ANIMASI LOGO BARU YANG PRESISI -- */
+/* Header & Nav */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #3a3a3a;
+  height: 60px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logoIcon {
+  width: 30px;
+  height: 30px;
+}
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+.navLinks {
+  display: flex;
+  gap: 24px;
+  font-weight: 500;
+}
+.navLinks a {
+  color: #c7cbce;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.navLinks a:hover {
+  color: #fff;
+}
+.navLinks .activeLink {
+  color: #00b06f;
+  font-weight: 700;
+}
+
+/* Middle Section */
+.middle {
+  width: 70%;
+  margin: 24px auto;
+  height: 168px;
+  background-image: url(https://i.postimg.cc/6QysxXk0/bp.png);
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.middleOverlay {
+  background: rgba(24, 24, 24, 0.7);
+  padding: 24px;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.middleTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.middleSubtitle {
+  font-size: 1rem;
+  color: #e0e0e0;
+  max-width: 500px;
+}
+
+/* Main Box Container */
+.boxCon {
+  width: 70%;
+  min-height: 250px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #242424;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.boxContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.boxContent h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+/* Form Elements */
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+.input {
+  padding: 12px 20px;
+  border: 1px solid #444;
+  background: #f2f4f5;
+  border-radius: 9px;
+  outline: none;
+  font-size: 17px;
+  width: 100%;
+  max-width: 400px;
+  color: #181818;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus {
+  border-color: #00b06f;
+  box-shadow: 0 0 0 3px rgba(0, 176, 111, 0.3);
+}
+.button {
+  background: #00b06f;
+  border: none;
+  color: #fff;
+  padding: 10px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.button:hover {
+  background: #008c58;
+}
+.loadingText {
+    margin-top: 30px;
+    font-size: 1.1rem;
+}
+
+/* Robux Selection */
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid #3a3a3a;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.row:last-child {
+  border-bottom: none;
+}
+.row:hover {
+  background-color: #333;
+}
+.price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+.details {
+  background: #00b06f;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-width: 180px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.row:hover .details {
+    transform: scale(1.05);
+}
+.robuxTotal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.pic {
+  width: 24px;
+  height: 24px;
+}
+
+/* Popup Notification */
+.popupNotification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  font-family: Arial, sans-serif;
+  z-index: 9999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0 20px;
+  }
+  .navLinks {
+    display: none; /* Sembunyikan untuk mobile demi kesederhanaan */
+  }
+  .middle, .boxCon {
+    width: 95%;
+  }
+  .middleTitle {
+    font-size: 1.8rem;
+  }
+  .row {
+      flex-direction: column;
+      gap: 10px;
+      height: auto;
+      padding: 16px;
+  }
+}
+/* @keyframes deconstruct-main-anim {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+}
+
+@keyframes deconstruct-left-wing-anim {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotate(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-15px) translateY(10px) rotate(-10deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes deconstruct-right-wing-anim {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotate(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(15px) translateY(10px) rotate(10deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes deconstruct-center-anim {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8) translateY(5px);
+    opacity: 0.8;
+  }
+}
+
+.deconstruct-main {
+  animation: deconstruct-main-anim 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.deconstruct-left-wing {
+  animation: deconstruct-left-wing-anim 1.8s ease-in-out infinite;
+  transform-origin: center left;
+}
+
+.deconstruct-right-wing {
+  animation: deconstruct-right-wing-anim 1.8s ease-in-out infinite;
+  transform-origin: center right;
+}
+
+.deconstruct-center {
+  animation: deconstruct-center-anim 1.8s ease-in-out infinite;
+  transform-origin: center;
+} */
