@@ -4,42 +4,26 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // --- KOMPONEN BANTUAN ---
 
-// [BARU] Ikon Robux yang dipecah menjadi 3 bagian untuk animasi
-// [UPDATED] Animated Robux Icon using Framer Motion
-const DeconstructedRobuxIcon = ({ className }) => {
-  // --- Animation Variants for each part of the icon ---
+// [FINAL & ACCURATE] Ikon yang dibangun dari 4 bagian untuk bentuk yang presisi
+const AccurateTransformingIcon = ({ className }) => {
+  const transition = { duration: 1.2, ease: [0.4, 0, 0.2, 1] };
 
-  // This variant controls the container and staggers the animation of the children.
-  const containerVariants = {
-    initial: {
-      opacity: 0,
-    },
-    animate: {
-      opacity: 1,
-      transition: {
-        // This makes the animation of each part start 0.2s after the previous one.
-        staggerChildren: 0.2,
-      },
-    },
+  // Varian untuk setiap bagian (piece) dari wajik
+  const topPieceVariants = {
+    initial: { x: 0, y: 0, rotate: 0 },
+    final: { x: -4, y: -8, rotate: -45, scale: 0.9 },
   };
-
-  // This variant defines the animation for the individual SVG paths.
-  const partVariants = {
-    initial: {
-      opacity: 0,
-      y: -20, // Start slightly above their final position
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1.5,
-        ease: "easeInOut",
-        // This creates the continuous, looping effect
-        repeat: Infinity,
-        repeatType: "mirror", // Animation will play forwards, then reverse
-      },
-    },
+  const rightPieceVariants = {
+    initial: { x: 0, y: 0, rotate: 0 },
+    final: { x: 4, y: -8, rotate: 45, scale: 0.9 },
+  };
+  const bottomPieceVariants = {
+    initial: { x: 0, y: 0, rotate: 0 },
+    final: { y: 8, scale: 1.1 },
+  };
+  const leftPieceVariants = {
+    initial: { x: 0, y: 0, rotate: 0 },
+    final: { x: -8, y: 2, rotate: 45, scale: 0.9 },
   };
 
   return (
@@ -49,52 +33,56 @@ const DeconstructedRobuxIcon = ({ className }) => {
       height="100"
       viewBox="0 0 24 24"
       fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      // Apply the container variants here
-      variants={containerVariants}
       initial="initial"
-      animate="animate"
+      animate="final"
+      // Konfigurasi transisi untuk seluruh grup
+      transition={{ staggerChildren: 0.1 }}
     >
-      <g>
-        {/* Each path is now a motion.path and will animate individually */}
-        <motion.path
-          variants={partVariants}
-          d="M12 2.5L19.5 6.25L12 10L4.5 6.25L12 2.5Z"
-        />
-        <motion.path
-          variants={partVariants}
-          // A slight delay to make the animation more interesting
-          transition={{ ...partVariants.animate.transition, delay: 0.2 }}
-          d="M12 10L4.5 6.25V13.75L12 17.5V10Z"
-        />
-        <motion.path
-          variants={partVariants}
-          // A slightly different delay for the last piece
-          transition={{ ...partVariants.animate.transition, delay: 0.4 }}
-          d="M12 10L19.5 6.25V13.75L12 17.5V10Z"
-        />
-      </g>
+      {/* Setiap path adalah sebuah trapesium. Saat digabungkan, 
+        mereka membentuk wajik tebal dengan lubang di tengah.
+      */}
+      <motion.path
+        d="M12 2 L22 12 L17 12 L12 7 Z" // Top piece
+        variants={topPieceVariants}
+        transition={transition}
+      />
+      <motion.path
+        d="M22 12 L12 22 L12 17 L17 12 Z" // Right piece
+        variants={rightPieceVariants}
+        transition={transition}
+      />
+      <motion.path
+        d="M12 22 L2 12 L7 12 L12 17 Z" // Bottom piece
+        variants={bottomPieceVariants}
+        transition={transition}
+      />
+      <motion.path
+        d="M2 12 L12 2 L12 7 L7 12 Z" // Left piece
+        variants={leftPieceVariants}
+        transition={transition}
+      />
     </motion.svg>
   );
 };
 
-// [BARU] Komponen Overlay untuk Loading
-// [UPDATED] Komponen Overlay for Loading
+
+// [UPDATED] Komponen Overlay Loading yang menggunakan ikon AKURAT yang baru
 const LoadingOverlay = ({ message }) => (
-  // Using AnimatePresence allows for a graceful fade-out when isLoading becomes false
   <AnimatePresence>
     <motion.div
       className="fixed inset-0 bg-dark bg-opacity-80 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
-      // Simple fade-in and fade-out for the overlay itself
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <DeconstructedRobuxIcon className="text-primary" />
+      {/* --- Menggunakan Ikon Final --- */}
+      <AccurateTransformingIcon className="text-primary" />
       <p className="text-lg font-semibold mt-4 text-white">{message}</p>
     </motion.div>
   </AnimatePresence>
 );
+
 
 // Notifikasi Social Proof (Tetap Sama)
 const SocialProofNotification = ({ user, amount }) => (
@@ -136,7 +124,7 @@ const CountdownTimer = ({ initialMinutes = 10 }) => {
   );
 };
 
-// Ikon Robux reguler untuk digunakan di UI non-loading
+// Ikon Robux reguler (Tetap Sama)
 const RobuxIcon = ({ className }) => (
   <svg
     className={className}
