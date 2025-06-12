@@ -251,15 +251,16 @@ function App() {
                 <section
                   className="bg-cover bg-center rounded-xl p-8 md:p-12 mb-6 text-center shadow-lg"
                   style={{
-                    backgroundImage: `url('https://images.alphacoders.com/133/1330923.jpeg')`,
+                    backgroundImage: `url('https://i.postimg.cc/6QysxXk0/bp.png')`,
                   }}
                 >
                   <div className="bg-black/60 p-6 rounded-lg">
                     <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">
-                      Pusat Hadiah Resmi
+                      Get Robux
                     </h1>
                     <p className="text-lg text-gray-200 mt-2">
-                      Klaim hadiah eksklusif untuk para pemain setia!
+                      Robux allows you to purchase upgrades for your avatar or
+                      buy special abilities in experiences.
                     </p>
                   </div>
                 </section>
