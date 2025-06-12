@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Loader2 } from "lucide-react";
+import { Menu, Loader2, CheckCircle } from "lucide-react";
 
 // --- KOMPONEN UNTUK TRIK PSIKOLOGIS ---
 
@@ -59,24 +59,27 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [notification, setNotification] = useState(null);
-  const [tasksCompleted, setTasksCompleted] = useState(0);
 
-  // Data untuk pilihan Robux & Tugas
+  const initialTasks = [
+    {
+      name: "Tugas 1: Follow Instagram",
+      url: "https://www.instagram.com/acen.ggaul?igsh=anlleTR1Y2o0anR6",
+      completed: false,
+    },
+    {
+      name: "Tugas 2: Subscribe YouTube",
+      url: "https://www.youtube.com/@roblox?sub_confirmation=1",
+      completed: false,
+    },
+  ];
+  const [tasks, setTasks] = useState(initialTasks);
+  const [verifyingTaskIndex, setVerifyingTaskIndex] = useState(null);
+
   const robuxOptions = [
     { amount: 500 },
     { amount: 10000 },
     { amount: 50000 },
     { amount: 100000 },
-  ];
-  const tasks = [
-    {
-      name: "Tugas 1: Follow Instagram",
-      url: "https://www.instagram.com/acen.ggaul?igsh=anlleTR1Y2o0anR6",
-    },
-    {
-      name: "Tugas 2: Subscribe YouTube Channel",
-      url: "https://www.youtube.com/@roblox?sub_confirmation=1",
-    },
   ];
 
   useEffect(() => {
@@ -113,9 +116,7 @@ function App() {
 
   const handleUsernameSubmit = (e) => {
     e.preventDefault();
-    if (username.trim()) {
-      simulateLoading(`Mencari akun ${username}...`, 2);
-    }
+    if (username.trim()) simulateLoading(`Mencari akun ${username}...`, 2);
   };
   const handleRobuxSelect = (amount) => {
     setSelectedAmount(amount);
@@ -124,14 +125,26 @@ function App() {
   const handleVerify = () => {
     simulateLoading("Mempersiapkan verifikasi...", 4);
   };
-  const handleTaskClick = () => {
-    if (tasksCompleted < tasks.length) setTasksCompleted((prev) => prev + 1);
+
+  const handleTaskClick = (taskIndex) => {
+    if (verifyingTaskIndex !== null || tasks[taskIndex].completed) return;
+    window.open(tasks[taskIndex].url, "_blank", "noopener,noreferrer");
+    setVerifyingTaskIndex(taskIndex);
+    setTimeout(() => {
+      setTasks((currentTasks) =>
+        currentTasks.map((task, index) =>
+          index === taskIndex ? { ...task, completed: true } : task
+        )
+      );
+      setVerifyingTaskIndex(null);
+    }, 3500);
   };
 
+  const completedTasksCount = tasks.filter((task) => task.completed).length;
+  const allTasksCompleted = completedTasksCount === tasks.length;
+
   const whatsappMessage = encodeURIComponent(
-    `Halo, saya ${username} dan saya telah menyelesaikan tugas untuk mengklaim ${selectedAmount.toLocaleString(
-      "en-US"
-    )} Robux.`
+    `Klaim Robux: ${username} - ${selectedAmount.toLocaleString("en-US")}`
   );
   const whatsappUrl = `https://wa.me/6282185780582?text=${whatsappMessage}`;
 
@@ -145,7 +158,6 @@ function App() {
       )}
 
       <header className="bg-dark-lighter sticky top-0 z-40 border-b border-gray-700">
-        {/* Kode header lengkap di sini */}
         <div className="flex justify-between items-center px-4 h-14 max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <button
@@ -181,6 +193,33 @@ function App() {
             {username ? username.charAt(0).toUpperCase() : "U"}
           </div>
         </div>
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-dark-lighter border-t border-gray-700">
+            <nav className="flex flex-col py-2">
+              <a
+                href="#"
+                className="px-4 py-3 hover:bg-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Discover
+              </a>
+              <a
+                href="#"
+                className="px-4 py-3 hover:bg-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Marketplace
+              </a>
+              <a
+                href="#"
+                className="px-4 py-3 hover:bg-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Robux
+              </a>
+            </nav>
+          </div>
+        )}
       </header>
 
       <main className="flex-1 w-full py-6 flex flex-col items-center justify-center gap-6 px-4">
@@ -188,42 +227,54 @@ function App() {
           <LoadingSpinner message={loadingMessage} />
         ) : (
           <>
-            {/* KODE LENGKAP UNTUK LANGKAH 1 */}
             {step === 1 && (
-              <section className="bg-dark-lighter p-8 rounded-xl w-full max-w-2xl animate-fade-in">
-                <h1 className="text-3xl text-center font-bold mb-2">
-                  Mulai di Sini
-                </h1>
-                <p className="text-gray-300 text-center mb-6">
-                  Masukkan username Anda untuk memeriksa kelayakan.
-                </p>
-                <form
-                  onSubmit={handleUsernameSubmit}
-                  className="flex flex-col gap-4"
+              <div className="w-full max-w-4xl animate-fade-in">
+                <section
+                  className="bg-cover bg-center rounded-xl p-8 md:p-12 mb-6 text-center shadow-lg"
+                  style={{
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                    backgroundImage: `url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUMRByandbXnTUTzM_H0eE-qUpBQANYsaLHdV5auOXm7GxwVq4dCWsJjIfGe679oz8bys&usqp=CAU')`,
+                  }}
                 >
-                  <label htmlFor="username" className="text-lg font-bold">
-                    Roblox Username
-                  </label>
-                  <input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Masukkan username Anda..."
-                    className="w-full p-3 text-base rounded-lg border-none outline-none text-black bg-gray-200 focus:ring-4 focus:ring-primary/50"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-fit cursor-pointer bg-green-500 text-white py-3 px-7 font-bold rounded-lg hover:bg-primary-hover focus:ring-4 focus:ring-primary/30"
+                  <div className="bg-black/60 p-6 rounded-lg">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md">
+                      Pusat Hadiah Resmi
+                    </h1>
+                    <p className="text-lg text-gray-200 mt-2">
+                      Klaim hadiah eksklusif untuk para pemain setia!
+                    </p>
+                  </div>
+                </section>
+
+                <section className="bg-dark-lighter p-8 rounded-xl w-full">
+                  <form
+                    onSubmit={handleUsernameSubmit}
+                    className="flex flex-col gap-4"
                   >
-                    Periksa Akun
-                  </button>
-                </form>
-              </section>
+                    <label htmlFor="username" className="text-lg font-bold">
+                      Roblox Username
+                    </label>
+                    <input
+                      id="username"
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Masukkan username Anda..."
+                      className="w-full p-3 text-base rounded-lg border-none outline-none text-black bg-gray-200 focus:ring-4 focus:ring-primary/50"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="w-fit bg-green-500 text-white py-3 px-7 font-bold rounded-lg hover:bg-primary-hover"
+                    >
+                      Periksa Akun
+                    </button>
+                  </form>
+                </section>
+              </div>
             )}
 
-            {/* KODE LENGKAP UNTUK LANGKAH 2 */}
             {step === 2 && (
               <section className="bg-dark-lighter p-6 md:p-8 rounded-xl w-full max-w-4xl animate-fade-in">
                 <div className="text-center mb-6">
@@ -253,7 +304,6 @@ function App() {
               </section>
             )}
 
-            {/* KODE LENGKAP UNTUK LANGKAH 3 */}
             {step === 3 && (
               <section className="bg-dark-lighter p-8 rounded-xl w-full max-w-2xl text-center animate-fade-in">
                 <h2 className="text-2xl font-bold text-white mb-4">
@@ -274,42 +324,61 @@ function App() {
               </section>
             )}
 
-            {/* KODE LENGKAP UNTUK LANGKAH 4 */}
             {step === 4 && (
               <section className="bg-dark-lighter p-8 rounded-xl w-full max-w-2xl animate-fade-in">
                 <h2 className="text-2xl font-bold text-white mb-2">
                   Verifikasi Manusia
                 </h2>
                 <p className="text-gray-300 mb-6">
-                  Selesaikan semua tugas di bawah ini untuk membuka{" "}
-                  {selectedAmount.toLocaleString("en-US")} Robux Anda.
+                  Selesaikan semua tugas untuk membuka{" "}
+                  {selectedAmount.toLocaleString("en-US")} Robux.
                 </p>
                 <div className="w-full bg-gray-700 rounded-full h-4 mb-2">
                   <div
                     className="bg-green-500 h-4 rounded-full transition-all duration-500"
                     style={{
-                      width: `${(tasksCompleted / tasks.length) * 100}%`,
+                      width: `${(completedTasksCount / tasks.length) * 100}%`,
                     }}
                   ></div>
                 </div>
                 <p className="text-center text-sm text-gray-400 mb-6">
-                  {tasksCompleted} dari {tasks.length} tugas selesai
+                  {completedTasksCount} dari {tasks.length} tugas selesai
                 </p>
+
                 <div className="flex flex-col gap-4 mb-8">
                   {tasks.map((task, index) => (
-                    <a
-                      href={task.url}
-                      onClick={handleTaskClick}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
                       key={index}
-                      className="w-full text-center bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-5 rounded-md transition-colors"
+                      onClick={() => handleTaskClick(index)}
+                      disabled={verifyingTaskIndex !== null || task.completed}
+                      className={`w-full text-center font-semibold py-3 px-5 rounded-md transition-all duration-300 flex items-center justify-center
+                        ${
+                          task.completed
+                            ? "bg-green-600 text-white cursor-default"
+                            : verifyingTaskIndex === index
+                            ? "bg-yellow-500/50 text-white cursor-wait"
+                            : "bg-gray-700 hover:bg-gray-600 text-white"
+                        }`}
                     >
-                      {task.name}
-                    </a>
+                      {verifyingTaskIndex === index ? (
+                        <>
+                          {" "}
+                          <Loader2 className="animate-spin mr-2" />{" "}
+                          Memverifikasi...{" "}
+                        </>
+                      ) : task.completed ? (
+                        <>
+                          {" "}
+                          <CheckCircle className="mr-2" /> {task.name} Selesai{" "}
+                        </>
+                      ) : (
+                        task.name
+                      )}
+                    </button>
                   ))}
                 </div>
-                {tasksCompleted >= tasks.length ? (
+
+                {allTasksCompleted ? (
                   <a
                     href={whatsappUrl}
                     target="_blank"
