@@ -1,51 +1,68 @@
-@import "tailwindcss";
 /* Letakkan ini di file CSS utama Anda, misal: src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* -- CSS UNTUK ANIMASI LOGO BARU -- */
+@import "tailwindcss";
+/* -- CSS UNTUK ANIMASI LOGO BARU YANG PRESISI -- */
 
-/* Keyframe untuk animasi bagian ATAS logo */
-@keyframes deconstruct-top {
+/* @keyframes deconstruct-main-anim {
   0%, 100% {
-    transform: translateY(0) rotate(0);
+    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: translateY(-25px) rotate(30deg);
+    transform: scale(0.9);
+    opacity: 0.8;
   }
 }
 
-/* Keyframe untuk animasi bagian KIRI logo */
-@keyframes deconstruct-left {
+@keyframes deconstruct-left-wing-anim {
   0%, 100% {
-    transform: translate(0, 0) rotate(0);
+    transform: translateX(0) translateY(0) rotate(0);
+    opacity: 1;
   }
   50% {
-    transform: translate(-25px, 15px) rotate(-30deg);
+    transform: translateX(-15px) translateY(10px) rotate(-10deg);
+    opacity: 0.8;
   }
 }
 
-/* Keyframe untuk animasi bagian KANAN logo */
-@keyframes deconstruct-right {
+@keyframes deconstruct-right-wing-anim {
   0%, 100% {
-    transform: translate(0, 0) rotate(0);
+    transform: translateX(0) translateY(0) rotate(0);
+    opacity: 1;
   }
   50% {
-    transform: translate(25px, 15px) rotate(-30deg);
+    transform: translateX(15px) translateY(10px) rotate(10deg);
+    opacity: 0.8;
   }
 }
 
-/* Class untuk menerapkan animasi */
-.part-top {
-  animation: deconstruct-top 2.5s ease-in-out infinite;
+@keyframes deconstruct-center-anim {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8) translateY(5px);
+    opacity: 0.8;
+  }
+}
+
+.deconstruct-main {
+  animation: deconstruct-main-anim 1.8s ease-in-out infinite;
   transform-origin: center;
 }
-.part-left {
-  animation: deconstruct-left 2.5s ease-in-out infinite;
-  transform-origin: center;
+
+.deconstruct-left-wing {
+  animation: deconstruct-left-wing-anim 1.8s ease-in-out infinite;
+  transform-origin: center left;
 }
-.part-right {
-  animation: deconstruct-right 2.5s ease-in-out infinite;
-  transform-origin: center;
+
+.deconstruct-right-wing {
+  animation: deconstruct-right-wing-anim 1.8s ease-in-out infinite;
+  transform-origin: center right;
 }
+
+.deconstruct-center {
+  animation: deconstruct-center-anim 1.8s ease-in-out infinite;
+  transform-origin: center;
+} */
